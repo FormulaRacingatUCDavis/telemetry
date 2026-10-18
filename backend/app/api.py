@@ -46,7 +46,7 @@ async def watcher(app: FastAPI):
     global processing_files
     async for changes in awatch(settings.can_process_path):
         for change, path in changes:
-            if path.endswith(".csv"):
+            if path.endswith(".log"):
                 if path not in processing_files:
                     processing_files.add(path)
                     asyncio.create_task(handle_file(path, app))
@@ -107,6 +107,9 @@ def zip_logs(type: str, payload: FileRequest):
 
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as zf:
         for filename in payload.filenames:
+            if type == "parsed":
+                filename = Path(filename).with_suffix(".csv").name
+
             file_path = (log_dir / filename).resolve()
 
             if file_path.parent != log_dir:
@@ -182,7 +185,7 @@ async def get_log_list():
     for file in raw_path.iterdir():
         if file.is_file():
             stats = file.stat()
-            parsed_file = parsed_path / file.name
+            parsed_file = parsed_path / file.with_suffix(".csv").name
 
             logs.append({
                 "file_name": file.name,

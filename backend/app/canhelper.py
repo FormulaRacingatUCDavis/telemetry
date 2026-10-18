@@ -1,4 +1,5 @@
 import shutil
+import can
 import cantools
 import os
 import csv
@@ -29,57 +30,47 @@ class CANHelper:
         log = os.path.basename(path)
         print(f'[LOG PARSER] Parsing {log}...')
 
-        with open(path, 'r', newline='') as log_raw:
-            reader = csv.reader(log_raw)
-
-            for row in reader:
-                id_str = row[0]
-                id = int(id_str, 16)
+        with can.LogReader(path) as reader:
+            for msg in reader:
                 message = None
 
                 for db in self.dbs:
                     try:
-                        message = db.get_message_by_frame_id(id)
+                        message = db.get_message_by_frame_id(msg.arbitration_id)
                         break
                     except KeyError:
                         continue
 
                 if message is None:
-                    print(f'[LOG PARSER] >> Unrecognized ID {id} at timestamp: {row[-1]}')
-                    f_ids.add(id)
+                    print(f'[LOG PARSER] >> Unrecognized ID {msg.arbitration_id:X} at timestamp: {msg.timestamp}')
+                    f_ids.add(msg.arbitration_id)
                     f_count += 1
                     continue
 
-                data_bytes = []
+                try:
+                    parsed_data = message.decode(msg.data)
+                except (ValueError, cantools.database.DecodeError) as e:
+                    print(f'[LOG PARSER] >> Failed to decode {msg.arbitration_id:X}: {e}')
+                    f_count += 1
+                    continue
 
-                for b in row[1:9]:
-                    if b.strip() == "":
-                        data_bytes.append(0)
-                    else:
-                        try:
-                            data_bytes.append(int(b, 16))
-                        except ValueError:
-                            data_bytes.append(0)
-
-                raw_data = bytes(data_bytes)
-                timestamp = float(row[-1]) / 1000.0
-                parsed_data = message.decode(raw_data)
+                id_str = f'{msg.arbitration_id:X}'
 
                 parsed_msgs.append((
-                    timestamp,
+                    msg.timestamp,
                     message.senders[0] if message.senders else "Unknown",
                     id_str,
                     message.name,
                     parsed_data
                 ))
 
-                if id_str not in ids:
-                    ids.add(id_str)
+                ids.add(id_str)
 
-                    for signal in message.signals:
-                        signals.add(signal.name)
+                for signal in message.signals:
+                    signals.add(signal.name)
 
-        with open(os.path.join(settings.can_parsed_path, log), 'w', newline='') as log_parsed:
+        parsed_path = os.path.join(settings.can_parsed_path, Path(log).with_suffix('.csv'))
+        with open(parsed_path, 'w', newline='') as log_parsed:
             signals_list = sorted(signals)
             header = ['Timestamp [s]', 'Source', 'ID', 'Message'] + signals_list
 
@@ -90,12 +81,11 @@ class CANHelper:
                 row_data = [timestamp, source, id_str, msg_name]
 
                 for sig in signals_list:
-                    value = decoded.get(sig, "")
-                    row_data.append(value)
+                    row_data.append(decoded.get(sig, ""))
 
                 writer.writerow(row_data)
 
-            print(f'[LOG PARSER] >> Total failed rows: {f_count}')
+        print(f'[LOG PARSER] >> Total failed rows: {f_count}')
 
         shutil.move(path, os.path.join(settings.can_raw_path, log))
 
