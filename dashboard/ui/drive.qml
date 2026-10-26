@@ -39,7 +39,7 @@ Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: grid.width / 2
             Layout.preferredHeight: grid.height / 2
-            border.weight: loggerindicator ? 2 : 0
+            border.width: Data.loggerindicator ? speedbox.width * 0.05 : 0
             border.color: "#FFFFFF"
 
             Text {
@@ -147,7 +147,7 @@ Rectangle {
                 font.bold: true
                 color: "black"
                 anchors.fill: parent
-                anchors.margin: parent.width * 0.5
+                anchors.margins: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
             }

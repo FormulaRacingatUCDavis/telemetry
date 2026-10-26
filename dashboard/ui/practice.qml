@@ -205,7 +205,7 @@ Rectangle {
                     font.bold: true
                     color: "black"
                     anchors.fill: parent
-                    anchors.margin: parent.width * 0.05
+                    anchors.margins: parent.width * 0.05
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }

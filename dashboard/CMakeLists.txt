@@ -10,7 +10,7 @@ include(deps.cmake)
 set(CMAKE_AUTOMOC ON) 
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_PREFIX_PATH "/home/frucd/Projects/Qt/6.10.0/gcc_arm64")
+set(CMAKE_PREFIX_PATH "/home/student/Qt/6.10.3/gcc_arm64")
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick Qml)
 
@@ -35,9 +35,9 @@ target_include_directories(driver_dashboard PUBLIC
 )
 
 target_link_libraries(driver_dashboard PRIVATE
-    m
     Qt6::Core
     Qt6::Gui
     Qt6::Quick
     Qt6::Qml
+    mosquitto
 )

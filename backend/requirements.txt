@@ -1,0 +1,9 @@
+fastapi[standard]
+python-can
+cantools
+uvicorn
+nicegui
+watchfiles
+psycopg
+pydantic-settings
+humanize

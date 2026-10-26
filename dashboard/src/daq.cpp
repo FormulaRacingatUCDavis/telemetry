@@ -113,7 +113,7 @@ namespace dashboard
                 // accumulator power not there yet
                 struct fe13_db_mcac_power_t acc_power_msg;
                 fe13_db_mcac_power_unpack(&acc_power_msg, frame.data, frame.can_dlc);
-                variable_instance->setaccum_power(
+                variable_instance->setaccumpower(
                     fe13_db_mcac_power_motor_power_decode(acc_power_msg.acc_power)
                 );
                 break;

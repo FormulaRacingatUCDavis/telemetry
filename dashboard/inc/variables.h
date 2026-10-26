@@ -236,7 +236,7 @@ namespace dashboard
 
         int m_mph = -1;
 
-        QString m_vehiclestate = "STARTUP";
+        QString m_vehiclestate = "";
         QString m_vehiclestate_color = green;
         int prevstate = -1;
 

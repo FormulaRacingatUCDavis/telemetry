@@ -112,7 +112,7 @@ Rectangle {
                 id: shutdowncircuitvalue
                 color: "black"
                 anchors.fill: parent
-                anchors.margin: parent.width * 0.05
+                anchors.margins: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.shutdowncircuit
@@ -219,7 +219,7 @@ Rectangle {
                 id: mcstatevalue
                 color: "black"
                 anchors.fill: parent
-                anchors.margin: parent.width * 0.05
+                anchors.margins: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.mcfault
@@ -256,7 +256,7 @@ Rectangle {
                 id: vehiclestatevalue
                 color: "black"
                 anchors.fill: parent
-                anchors.margin: parent.width * 0.05
+                anchors.margins: parent.width * 0.05
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 text: Data.vehiclestate
@@ -330,7 +330,7 @@ Rectangle {
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                text: (Data.accum_power == -1) ? "" : "" + Data.accum_power
+                text: (Data.accumpower == -1) ? "" : "" + Data.accumpower
                 font.pixelSize: grid.valuefontsize
                 font.family: mainpage.typeface
                 font.bold: true

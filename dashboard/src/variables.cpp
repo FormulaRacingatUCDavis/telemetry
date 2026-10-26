@@ -95,6 +95,10 @@ namespace dashboard
     bool Variables::loggerindicator() {
         return m_loggerindicator;
     }
+
+    bool Variables::errormode() {
+        return m_errormode;
+    }
 /* LAPTIME TO ADD
     double Variables::curr_lap_time() {
         return (double) std::chrono::duration_cast<std::chrono::seconds>(std::chrono::nanoseconds(curr_lap_time_ns)).count();
@@ -416,7 +420,7 @@ namespace dashboard
                 case ((uint32_t) pow(2, 0)):
                     m_mcfault = "Motor Overspeed";
                     break;
-                case (fault == (uint32_t) pow(2, 1)):
+                case ((uint32_t) pow(2, 1)):
                     m_mcfault = "Overcurrent fault";
                     break;
                 case ((uint32_t) pow(2, 2)):
