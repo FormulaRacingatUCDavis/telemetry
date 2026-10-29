@@ -8,6 +8,25 @@
         "env": []
     },
     {
+        "id": "5755c454fca6f8be",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#fcfcfd",
+            "primary": "#0d74ce",
+            "bgPage": "#f9f9fb",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9e0"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    },
+    {
         "id": "175d0a9d1423c451",
         "type": "ui-base",
         "name": "My Dashboard",
@@ -26,25 +45,6 @@
         "notificationDisplayTime": 1,
         "showDisconnectNotification": true,
         "allowInstall": false
-    },
-    {
-        "id": "5755c454fca6f8be",
-        "type": "ui-theme",
-        "name": "Default Theme",
-        "colors": {
-            "surface": "#fcfcfd",
-            "primary": "#0d74ce",
-            "bgPage": "#f9f9fb",
-            "groupBg": "#ffffff",
-            "groupOutline": "#d9d9e0"
-        },
-        "sizes": {
-            "density": "default",
-            "pagePadding": "12px",
-            "groupGap": "12px",
-            "groupBorderRadius": "4px",
-            "widgetGap": "12px"
-        }
     },
     {
         "id": "6169d039ac9e9d01",
@@ -114,6 +114,37 @@
         "tab": ""
     },
     {
+        "id": "516b1f969d8f57c3",
+        "type": "mqtt-broker",
+        "name": "vcan_docker",
+        "broker": "172.17.0.1",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "3eb72aeff7f65baf",
         "type": "http request",
         "z": "999c06ba44161ae7",
@@ -134,157 +165,6 @@
         "wires": [
             [
                 "572ddecace8e3d28"
-            ]
-        ]
-    },
-    {
-        "id": "2efcc844c6e4805c",
-        "type": "ui-button",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "name": "Download Logs",
-        "label": "Download",
-        "order": 7,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 240,
-        "y": 280,
-        "wires": [
-            [
-                "86f5141cef4b9c1a"
-            ]
-        ]
-    },
-    {
-        "id": "4ca54881313bad61",
-        "type": "ui-radio-group",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "name": "Select type of log",
-        "label": "",
-        "order": 6,
-        "width": 0,
-        "height": 0,
-        "columns": 1,
-        "passthru": false,
-        "options": [
-            {
-                "label": "Raw (CANDump)",
-                "value": "raw",
-                "type": "str"
-            },
-            {
-                "label": "Processed (CSV)",
-                "value": "parsed",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 250,
-        "y": 160,
-        "wires": [
-            [
-                "316b143978e477b9"
-            ]
-        ]
-    },
-    {
-        "id": "572ddecace8e3d28",
-        "type": "ui-table",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "name": "CAN data logs",
-        "label": "",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "maxrows": 0,
-        "passthru": false,
-        "autocols": false,
-        "showSearch": true,
-        "deselect": true,
-        "selectionType": "checkbox",
-        "columns": [
-            {
-                "title": "File Name",
-                "key": "file_name",
-                "keyType": "key",
-                "type": "text",
-                "width": "",
-                "align": "start"
-            },
-            {
-                "title": "Created",
-                "key": "creation_date",
-                "keyType": "key",
-                "type": "text",
-                "width": "",
-                "align": "start"
-            },
-            {
-                "title": "Size (R)",
-                "key": "file_size_raw",
-                "keyType": "key",
-                "type": "text",
-                "width": "",
-                "align": "start"
-            },
-            {
-                "title": "Size (P)",
-                "key": "file_size_parsed",
-                "keyType": "key",
-                "type": "text",
-                "width": "",
-                "align": "start"
-            }
-        ],
-        "mobileBreakpoint": "sm",
-        "mobileBreakpointType": "defaults",
-        "action": "replace",
-        "className": "",
-        "x": 680,
-        "y": 80,
-        "wires": [
-            [
-                "82ae746cb37650d9"
-            ]
-        ]
-    },
-    {
-        "id": "4b48f632335fdf1d",
-        "type": "ui-event",
-        "z": "999c06ba44161ae7",
-        "ui": "175d0a9d1423c451",
-        "name": "Refresh page",
-        "x": 230,
-        "y": 80,
-        "wires": [
-            [
-                "3eb72aeff7f65baf"
             ]
         ]
     },
@@ -360,156 +240,6 @@
                 "e221a1f6b94791c5"
             ]
         ]
-    },
-    {
-        "id": "69ab87a0b7b48fe4",
-        "type": "ui-template",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "page": "",
-        "ui": "",
-        "name": "Download in browser",
-        "order": 4,
-        "width": 0,
-        "height": 0,
-        "head": "",
-        "format": "\n<template>\n  <div style=\"display: none\"></div>\n</template>\n\n<script>\nexport default {\n  watch: {\n    async msg(msg) {\n      if (!msg?.payload?.filenames || !msg?.downloadId) return\n\n      // Prevent duplicate downloads on page refresh\n      const key = \"lastDownloadId\"\n\n      if (sessionStorage.getItem(key) === msg.downloadId) return\n\n      sessionStorage.setItem(key, msg.downloadId)\n\n      const { filenames, type } = msg.payload\n\n      try {\n        const response = await fetch(\n          `http://127.0.0.1:8000/api/can/logs/zip/${type}`,\n          {\n            method: \"POST\",\n            headers: {\n              \"Content-Type\": \"application/json\"\n            },\n            body: JSON.stringify({ filenames })\n          }\n        )\n\n        if (!response.ok) {\n          throw new Error(`HTTP ${response.status}`)\n        }\n\n        const blob = await response.blob()\n        const url = URL.createObjectURL(blob)\n\n        const a = document.createElement(\"a\")\n        a.href = url\n        a.download = \"canlogs.zip\"\n        document.body.appendChild(a)\n        a.click()\n        a.remove()\n\n        setTimeout(() => URL.revokeObjectURL(url), 1000)\n\n      } catch (error) {\n        console.error(\"ZIP download failed:\", error)\n        sessionStorage.removeItem(key)\n      }\n    }\n  }\n}\n</script>\n",
-        "storeOutMessages": true,
-        "passthru": false,
-        "resendOnRefresh": true,
-        "templateScope": "local",
-        "className": "",
-        "x": 700,
-        "y": 240,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "e221a1f6b94791c5",
-        "type": "ui-notification",
-        "z": "999c06ba44161ae7",
-        "ui": "175d0a9d1423c451",
-        "position": "top right",
-        "colorDefault": true,
-        "color": "#000000",
-        "displayTime": "3",
-        "showCountdown": true,
-        "outputs": 1,
-        "allowDismiss": true,
-        "dismissText": "Close",
-        "allowConfirm": false,
-        "confirmText": "Confirm",
-        "raw": false,
-        "className": "",
-        "name": "Warn (no processed file)",
-        "x": 710,
-        "y": 340,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "e4be54845f65abe4",
-        "type": "ui-button",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "name": "Start logging",
-        "label": "Record",
-        "order": 2,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 570,
-        "y": 440,
-        "wires": [
-            [
-                "a58001fc215e6851"
-            ]
-        ]
-    },
-    {
-        "id": "dfe958de6d3a32d6",
-        "type": "ui-button",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "name": "Stop logging",
-        "label": "Stop",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "emulateClick": false,
-        "tooltip": "",
-        "color": "",
-        "bgcolor": "",
-        "className": "",
-        "icon": "",
-        "iconPosition": "left",
-        "payload": "SIGTERM",
-        "payloadType": "str",
-        "topic": "topic",
-        "topicType": "msg",
-        "buttonColor": "",
-        "textColor": "",
-        "iconColor": "",
-        "enableClick": true,
-        "enablePointerdown": false,
-        "pointerdownPayload": "",
-        "pointerdownPayloadType": "str",
-        "enablePointerup": false,
-        "pointerupPayload": "",
-        "pointerupPayloadType": "str",
-        "x": 370,
-        "y": 520,
-        "wires": [
-            [
-                "cc1d582674b2b879"
-            ]
-        ]
-    },
-    {
-        "id": "2cc12a2a47dc101a",
-        "type": "ui-text",
-        "z": "999c06ba44161ae7",
-        "group": "fc0502477daedbd4",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "name": "Display logging status",
-        "label": "Logging Status",
-        "format": "{{msg.payload}}",
-        "layout": "row-spread",
-        "style": false,
-        "font": "",
-        "fontSize": 16,
-        "color": "#717171",
-        "wrapText": false,
-        "className": "",
-        "value": "payload",
-        "valueType": "msg",
-        "x": 820,
-        "y": 620,
-        "wires": []
     },
     {
         "id": "a58001fc215e6851",
@@ -602,6 +332,300 @@
         ]
     },
     {
+        "id": "2efcc844c6e4805c",
+        "type": "ui-button",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "Download Logs",
+        "label": "Download",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 240,
+        "y": 280,
+        "wires": [
+            [
+                "86f5141cef4b9c1a"
+            ]
+        ]
+    },
+    {
+        "id": "e4be54845f65abe4",
+        "type": "ui-button",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "Start logging",
+        "label": "Record",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 570,
+        "y": 440,
+        "wires": [
+            [
+                "a58001fc215e6851"
+            ]
+        ]
+    },
+    {
+        "id": "dfe958de6d3a32d6",
+        "type": "ui-button",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "Stop logging",
+        "label": "Stop",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "iconPosition": "left",
+        "payload": "SIGTERM",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 370,
+        "y": 520,
+        "wires": [
+            [
+                "cc1d582674b2b879"
+            ]
+        ]
+    },
+    {
+        "id": "4ca54881313bad61",
+        "type": "ui-radio-group",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "Select type of log",
+        "label": "",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "Raw (CANDump)",
+                "value": "raw",
+                "type": "str"
+            },
+            {
+                "label": "Processed (CSV)",
+                "value": "parsed",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 250,
+        "y": 160,
+        "wires": [
+            [
+                "316b143978e477b9"
+            ]
+        ]
+    },
+    {
+        "id": "39da493ac7aafa74",
+        "type": "ui-radio-group",
+        "z": "999c06ba44161ae7",
+        "group": "80bcc988a33ffde4",
+        "name": "",
+        "label": "Select Option:",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "columns": "2",
+        "passthru": false,
+        "options": [
+            {
+                "label": "Dashboard State",
+                "value": "0x766",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "selection",
+        "topicType": "str",
+        "className": "",
+        "x": 280,
+        "y": 780,
+        "wires": [
+            [
+                "d4c73ce6a8e9c00e"
+            ]
+        ]
+    },
+    {
+        "id": "2cc12a2a47dc101a",
+        "type": "ui-text",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "Display logging status",
+        "label": "Logging Status",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "wrapText": false,
+        "className": "",
+        "value": "payload",
+        "valueType": "msg",
+        "x": 820,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "572ddecace8e3d28",
+        "type": "ui-table",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "name": "CAN data logs",
+        "label": "",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "maxrows": 0,
+        "passthru": false,
+        "autocols": false,
+        "showSearch": true,
+        "deselect": true,
+        "selectionType": "checkbox",
+        "columns": [
+            {
+                "title": "File Name",
+                "key": "file_name",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Created",
+                "key": "creation_date",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Size (R)",
+                "key": "file_size_raw",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            },
+            {
+                "title": "Size (P)",
+                "key": "file_size_parsed",
+                "keyType": "key",
+                "type": "text",
+                "width": "",
+                "align": "start"
+            }
+        ],
+        "mobileBreakpoint": "sm",
+        "mobileBreakpointType": "defaults",
+        "action": "replace",
+        "className": "",
+        "x": 680,
+        "y": 80,
+        "wires": [
+            [
+                "82ae746cb37650d9"
+            ]
+        ]
+    },
+    {
+        "id": "e221a1f6b94791c5",
+        "type": "ui-notification",
+        "z": "999c06ba44161ae7",
+        "ui": "175d0a9d1423c451",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 1,
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "allowConfirm": false,
+        "confirmText": "Confirm",
+        "raw": false,
+        "className": "",
+        "name": "Warn (no processed file)",
+        "x": 710,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "94e82c839d193d5c",
         "type": "ui-chart",
         "z": "999c06ba44161ae7",
@@ -657,39 +681,108 @@
         "height": 8,
         "className": "",
         "interpolation": "linear",
-        "x": 610,
+        "x": 650,
         "y": 760,
         "wires": [
             []
         ]
     },
     {
-        "id": "39da493ac7aafa74",
-        "type": "ui-radio-group",
+        "id": "4b48f632335fdf1d",
+        "type": "ui-event",
         "z": "999c06ba44161ae7",
-        "group": "80bcc988a33ffde4",
-        "name": "",
-        "label": "Select Option:",
-        "order": 1,
+        "ui": "175d0a9d1423c451",
+        "name": "Refresh page",
+        "x": 230,
+        "y": 80,
+        "wires": [
+            [
+                "3eb72aeff7f65baf"
+            ]
+        ]
+    },
+    {
+        "id": "69ab87a0b7b48fe4",
+        "type": "ui-template",
+        "z": "999c06ba44161ae7",
+        "group": "fc0502477daedbd4",
+        "page": "",
+        "ui": "",
+        "name": "Download in browser",
+        "order": 4,
         "width": 0,
         "height": 0,
-        "columns": 1,
+        "head": "",
+        "format": "\n<template>\n  <div style=\"display: none\"></div>\n</template>\n\n<script>\nexport default {\n  watch: {\n    async msg(msg) {\n      if (!msg?.payload?.filenames || !msg?.downloadId) return\n\n      // Prevent duplicate downloads on page refresh\n      const key = \"lastDownloadId\"\n\n      if (sessionStorage.getItem(key) === msg.downloadId) return\n\n      sessionStorage.setItem(key, msg.downloadId)\n\n      const { filenames, type } = msg.payload\n\n      try {\n        const response = await fetch(\n          `http://127.0.0.1:8000/api/can/logs/zip/${type}`,\n          {\n            method: \"POST\",\n            headers: {\n              \"Content-Type\": \"application/json\"\n            },\n            body: JSON.stringify({ filenames })\n          }\n        )\n\n        if (!response.ok) {\n          throw new Error(`HTTP ${response.status}`)\n        }\n\n        const blob = await response.blob()\n        const url = URL.createObjectURL(blob)\n\n        const a = document.createElement(\"a\")\n        a.href = url\n        a.download = \"canlogs.zip\"\n        document.body.appendChild(a)\n        a.click()\n        a.remove()\n\n        setTimeout(() => URL.revokeObjectURL(url), 1000)\n\n      } catch (error) {\n        console.error(\"ZIP download failed:\", error)\n        sessionStorage.removeItem(key)\n      }\n    }\n  }\n}\n</script>\n",
+        "noerr": 0,
+        "storeOutMessages": true,
         "passthru": false,
-        "options": [
-            {
-                "label": "",
-                "value": "",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
+        "resendOnRefresh": true,
+        "templateScope": "local",
         "className": "",
-        "x": 420,
-        "y": 760,
+        "x": 700,
+        "y": 240,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "4ff8651efcb48208",
+        "type": "mqtt in",
+        "z": "999c06ba44161ae7",
+        "name": "",
+        "topic": "can/frame",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "516b1f969d8f57c3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 260,
+        "y": 840,
+        "wires": [
+            [
+                "d4c73ce6a8e9c00e"
+            ]
+        ]
+    },
+    {
+        "id": "a15345a4507d7475",
+        "type": "debug",
+        "z": "999c06ba44161ae7",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "d4c73ce6a8e9c00e",
+        "type": "function",
+        "z": "999c06ba44161ae7",
+        "name": "Sort Can Signal",
+        "func": "// message signal \n\ntry {\n    let id = msg.payload.id\n\n    // stores value (signal id) of selected radio in memory\n    // if (msg.topic === \"selection\") {\n    //     context.set(\"selected\", msg.payload); \n    //     return null;\n    // }\n\n    // // checks if current signal is same id as selected id\n    // if (id !== context.get(\"selected\")) {\n    //     id = null;\n    // }\n\n    switch(id) {\n        case 0x766:\n            msg.timestamp = msg.payload.timestamp;\n            msg.payload = msg.payload.dashboard_state;\n            break;\n        default:\n            return null;\n    }\n\n} catch(e) {\n    node.error(\"Failed to parse MQTT JSON: \" + e.message, msg);\n    return null;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 840,
+        "wires": [
+            [
+                "a15345a4507d7475",
+                "94e82c839d193d5c"
+            ]
         ]
     }
 ]
