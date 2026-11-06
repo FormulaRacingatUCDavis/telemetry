@@ -1,0 +1,1 @@
+import{a,f as m}from"../chunks/C10nFKEW.js";import"../chunks/DClxZEuC.js";var t=m('<img id="frame" src="/photo_error.jpg" width="100%" alt="Error monkey"/>');function i(r){var o=t();a(r,o)}export{i as component};

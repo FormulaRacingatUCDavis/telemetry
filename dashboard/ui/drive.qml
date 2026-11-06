@@ -8,7 +8,7 @@ Rectangle {
     visible: true
     anchors.fill: parent
     color: "black"
-
+    
     // for debugging
     MouseArea {
         anchors.fill: parent

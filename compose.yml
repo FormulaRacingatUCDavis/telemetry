@@ -35,6 +35,21 @@ services:
     ports:
       - "8000:8000"
 
+  dashboard:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    env_file:
+      - .env
+
+    volumes:
+      - ${DATA_HOST_PATH}:/app/data
+      - ${RESOURCES_HOST_PATH}:/app/resources
+
+    ports:
+      - "8000:8000"
+
   mosquitto:
     image: eclipse-mosquitto:2
     container_name: mosquitto

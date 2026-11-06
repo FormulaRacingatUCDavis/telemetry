@@ -43,17 +43,17 @@ int main(int argc, char *argv[])
         dashboard::CANManager telem;
 
         // subscribe to logger indicator
-        // mosquitto_lib_init();
-        // struct mosquitto* mosq = mosquitto_new("logger-subscriber", true, nullptr);
-        // int rc = mosquitto_connect(mosq, "localhost", 1883, 60);
-        // if (rc != MOSQ_ERR_SUCCESS)
-        // {
-        //     std::cerr << "MQTT connect failed: " << mosquitto_strerror(rc) << std::endl;
-        //     return 1;
-        // }
-        // mosquitto_message_callback_set(mosq, on_message);
-        // mosquitto_subscribe(mosq, nullptr, "can/log/status", 0);
-        // mosquitto_loop_start(mosq);
+        mosquitto_lib_init();
+        struct mosquitto* mosq = mosquitto_new("logger-subscriber", true, nullptr);
+        int rc = mosquitto_connect(mosq, "mosquitto", 1883, 60); // make sure cstring matches mqtt ontainer name matches 
+        if (rc != MOSQ_ERR_SUCCESS)
+        {
+            std::cerr << "MQTT connect failed: " << mosquitto_strerror(rc) << std::endl;
+            return 1;
+        }
+        mosquitto_message_callback_set(mosq, on_message);
+        mosquitto_subscribe(mosq, nullptr, "can/log/status", 1);
+        mosquitto_loop_start(mosq);
 
         // create separate thread for getting data from CAN to not get blocked by dashboard
         QThread* thread = new QThread;

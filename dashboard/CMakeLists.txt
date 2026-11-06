@@ -10,8 +10,6 @@ include(deps.cmake)
 set(CMAKE_AUTOMOC ON) 
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_PREFIX_PATH "/home/student/Qt/6.10.3/gcc_arm64")
-
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick Qml)
 
 set(DAQ_SOURCES

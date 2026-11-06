@@ -10,7 +10,7 @@ Window {
     width: 800 
     height: 480
     // need to implement when to be full screen
-    visibility: Window.FullScreen
+    // visibility: Window.FullScreen
     Shortcut {
         sequences: ["Escape"]
         onActivated: {
@@ -41,8 +41,8 @@ Window {
     Loader {
         id: pageLoader
         anchors.fill: parent
-        // source: mainpage.pages[mainpage.currPage] 
-        source: Data.dashboardpage
+        source: mainpage.pages[mainpage.currPage] 
+        // source: Data.dashboardpage
     } 
 
     Loader {
