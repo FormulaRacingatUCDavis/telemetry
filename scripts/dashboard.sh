@@ -22,9 +22,10 @@ docker run -d \
 
 echo "network is running"
 
-
+# enable dashboard to display
 xhost +local:docker
 
+# runs dashboard
 docker run --rm -it \
   --network ${NETWORK_NAME} \
   -e DISPLAY=$DISPLAY \

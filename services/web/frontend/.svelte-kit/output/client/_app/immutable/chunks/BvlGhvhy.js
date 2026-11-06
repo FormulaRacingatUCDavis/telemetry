@@ -1,1 +1,0 @@
-import{C as S,K as h,x as k,M as x,S as M}from"./D_a3qmiF.js";function t(r,i){return r===i||(r==null?void 0:r[M])===i}function q(r={},i,a,T){return S(()=>{var f,s;return h(()=>{f=s,s=[],k(()=>{r!==a(...s)&&(i(r,...s),f&&t(a(...f),r)&&i(null,...f))})}),()=>{x(()=>{s&&t(a(...s),r)&&i(null,...s)})}}),r}export{q as b};
