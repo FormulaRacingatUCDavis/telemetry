@@ -26,7 +26,7 @@ echo "network is running"
 xhost +local:docker
 
 # runs dashboard
-docker run --rm -it \
+docker run --rm -dt \
   --network ${NETWORK_NAME} \
   -e DISPLAY=$DISPLAY \
   -e QT_QPA_PLATFORM=xcb \
