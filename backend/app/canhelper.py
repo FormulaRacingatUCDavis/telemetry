@@ -10,13 +10,10 @@ class CANHelper:
     """
     Handles any analysis or retrieval relating to CAN data
     """
-    def __init__(self, config):
-        self.config = config
-
+    def __init__(self):
         dbc_dir = Path(settings.dbc_dir)
 
         self.dbs = []
-
         for dbc_path in dbc_dir.glob("*.dbc"):
             self.dbs.append(cantools.db.load_file(dbc_path))
 
