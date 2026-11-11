@@ -2,9 +2,10 @@ import shutil
 import can
 import cantools
 import os
-import csv
 from pathlib import Path
 from .settings import settings
+
+import pandas as pd
 
 class CANHelper:
     """
@@ -19,7 +20,6 @@ class CANHelper:
 
     def generate_parsed(self, path: str):
         parsed_msgs = []
-        ids = set()
         signals = set()
         f_ids = set()
         f_count = 0
@@ -51,39 +51,39 @@ class CANHelper:
                     f_count += 1
                     continue
 
-                id_str = f'{msg.arbitration_id:X}'
-
                 parsed_msgs.append((
                     msg.timestamp,
                     message.senders[0] if message.senders else "Unknown",
-                    id_str,
+                    f'{msg.arbitration_id:X}',
                     message.name,
                     parsed_data
                 ))
 
-                ids.add(id_str)
-
                 for signal in message.signals:
                     signals.add(signal.name)
 
-        parsed_path = os.path.join(settings.can_parsed_path, Path(log).with_suffix('.csv'))
-        with open(parsed_path, 'w', newline='') as log_parsed:
-            signals_list = sorted(signals)
-            header = ['Timestamp [s]', 'Source', 'ID', 'Message'] + signals_list
+        signals_list = sorted(signals)
+        data = []
 
-            writer = csv.writer(log_parsed)
-            writer.writerow(header)
+        for timestamp, source, id, msg_name, decoded in parsed_msgs:
+            msg = {
+                "Timestamp [s]": timestamp,
+                "Source": source,
+                "ID": id,
+                "Message": msg_name,
+            }
+            msg.update(decoded)
+            data.append(msg)
 
-            for timestamp, source, id_str, msg_name, decoded in parsed_msgs:
-                row_data = [timestamp, source, id_str, msg_name]
+        df = pd.DataFrame(
+            data,
+            columns = ["Timestamp [s]", "Source", "ID", "Message"] + signals_list
+        )
+        df.to_csv(os.path.join(settings.can_parsed_path, Path(log).with_suffix('.csv')).replace('candump', 'FE14'), index=False)
 
-                for sig in signals_list:
-                    row_data.append(decoded.get(sig, ""))
-
-                writer.writerow(row_data)
-
+        # Generate PDF report
+        
         print(f'[LOG PARSER] >> Total failed rows: {f_count}')
-
         shutil.move(path, os.path.join(settings.can_raw_path, log))
 
     def get_messages(self, dbc_path):

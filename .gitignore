@@ -9,7 +9,7 @@ build/
 CMakeUserPresets.json
 
 # Node-RED
-resources/node-red/node_modules/
-resources/node-red/.npm/
-resources/node-red/.config.*
-resources/node-red/*_cred.json
+node-red/node_modules/
+node-red/.npm/
+node-red/.config.*
+node-red/*_cred.json

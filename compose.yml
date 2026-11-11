@@ -18,7 +18,7 @@ services:
 
     volumes:
       - ./data:/app/data
-      - ./resources:/app/resources
+      - ./shared:/app/shared
 
   backend:
     build:
@@ -30,7 +30,7 @@ services:
 
     volumes:
       - ${DATA_HOST_PATH}:/app/data
-      - ${RESOURCES_HOST_PATH}:/app/resources
+      - ${SHARED_HOST_PATH}:/app/shared
 
     ports:
       - "8000:8000"
@@ -45,11 +45,11 @@ services:
       - "9001:9001"
 
     volumes:
-      - ./resources/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
   node-red:
     build:
-      context: ./resources/node-red
+      context: ./node-red
     container_name: node-red
     network_mode: host
     restart: unless-stopped
@@ -59,6 +59,6 @@ services:
       NODE_RED_CREDENTIAL_SECRET: ${NODE_RED_CREDENTIAL_SECRET}
 
     volumes:
-      - ./resources/node-red:/data
+      - ./node-red:/data
       - ./scripts:/app/scripts
       - ./data:/app/data

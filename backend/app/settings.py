@@ -9,7 +9,6 @@ class Settings(BaseSettings):
     can_raw_path: str
     can_parsed_path: str
 
-    config_path: str
     dbc_dir: str
 
     model_config = SettingsConfigDict(
