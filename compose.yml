@@ -14,7 +14,7 @@ services:
       PCAN_INTERFACE: ${PCAN_INTERFACE}
       TCAN_INTERFACE: ${TCAN_INTERFACE}
       CAN_INTAKE_PATH: ${CAN_INTAKE_PATH}
-      CAN_PROCESS_PATH: ${CAN_PROCESS_PATH}
+      CAN_PROCESS_PATH: ${CAN_STAGING_PATH}
 
     volumes:
       - ./data:/app/data
@@ -29,6 +29,7 @@ services:
       - .env
 
     volumes:
+      - ./backend:/backend
       - ${DATA_HOST_PATH}:/app/data
       - ${SHARED_HOST_PATH}:/app/shared
 

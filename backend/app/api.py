@@ -22,22 +22,23 @@ class FileRequest(BaseModel):
 
 DBC_DIR = settings.dbc_dir
 can_helper = CANHelper()
-processing_files = set()
+staged_files = set()
 
 os.makedirs(settings.can_intake_path, exist_ok=True)
-os.makedirs(settings.can_process_path, exist_ok=True)
+os.makedirs(settings.can_staging_path, exist_ok=True)
 os.makedirs(settings.can_raw_path, exist_ok=True)
-os.makedirs(settings.can_parsed_path, exist_ok=True)
+os.makedirs(settings.can_processed_path, exist_ok=True)
+os.makedirs(settings.can_reports_path, exist_ok=True)
 os.makedirs(DBC_DIR, exist_ok=True)
 
 semaphore = asyncio.Semaphore(1)
 async def watcher(app: FastAPI):
-    global processing_files
-    async for changes in awatch(settings.can_process_path):
+    global staged_files
+    async for changes in awatch(settings.can_staging_path):
         for change, path in changes:
             if path.endswith(".log"):
-                if path not in processing_files:
-                    processing_files.add(path)
+                if path not in staged_files:
+                    staged_files.add(path)
                     asyncio.create_task(handle_file(path, app))
 
 async def handle_file(path: str, app: FastAPI):
@@ -46,7 +47,7 @@ async def handle_file(path: str, app: FastAPI):
             loop = asyncio.get_running_loop()
             await loop.run_in_executor(
                 None,
-                can_helper.generate_parsed,
+                can_helper.process_candump,
                 path
             )
     except Exception as e:
@@ -82,10 +83,8 @@ async def root():
 @app.post("/api/can/logs/zip/{type}")
 def zip_logs(type: str, payload: FileRequest):
     log_dirs = {
-        "intake": settings.can_intake_path,
-        "process": settings.can_process_path,
         "raw": settings.can_raw_path,
-        "parsed": settings.can_parsed_path
+        "processed": settings.can_processed_path
     }
 
     if type not in log_dirs:
@@ -96,8 +95,8 @@ def zip_logs(type: str, payload: FileRequest):
 
     with ZipFile(memory_file, mode="w", compression=ZIP_DEFLATED) as zf:
         for filename in payload.filenames:
-            if type == "parsed":
-                filename = Path(filename).with_suffix(".csv").name
+            if type == "processed":
+                filename = Path(filename).with_suffix(".csv").name.replace("candump", "FE14")
 
             file_path = (log_dir / filename).resolve()
 
@@ -120,38 +119,24 @@ def zip_logs(type: str, payload: FileRequest):
     return StreamingResponse(
         memory_file,
         media_type="application/zip",
-        headers={"Content-Disposition": 'attachment; filename="canlogs.zip"'}
     )
-
-@app.get("/api/dbc/list")
-async def get_dbc_list():
-    return [file.name for file in Path(DBC_DIR).glob("*.dbc") if file.is_file()]
-
-@app.get("/api/dbc/messages")
-async def get_dbc_messages(file: str):
-    dbc_path = Path(DBC_DIR) / Path(file).name
-
-    if not dbc_path.is_file() or dbc_path.suffix.lower() != ".dbc":
-        raise HTTPException(status_code=404, detail="DBC file not found")
-
-    return can_helper.get_messages(dbc_path)
 
 @app.get("/api/logs/list")
 async def get_log_list():
     raw_path = Path(settings.can_raw_path)
-    parsed_path = Path(settings.can_parsed_path)
+    processed_path = Path(settings.can_processed_path)
     logs = []
 
     for file in raw_path.iterdir():
         if file.is_file():
             stats = file.stat()
-            parsed_file = parsed_path / file.with_suffix(".csv").name
+            processed_file = processed_path / file.with_suffix(".csv").name.replace("candump", "FE14")
 
             logs.append({
                 "file_name": file.name,
                 "creation_date": datetime.fromtimestamp(stats.st_mtime).strftime("%Y-%m-%d %H:%M:%S"),
                 "file_size_raw": humanize.naturalsize(stats.st_size, binary=True),
-                "file_size_parsed": (humanize.naturalsize(parsed_file.stat().st_size, binary=True) if parsed_file.is_file() else "N/A")
+                "file_size_processed": (humanize.naturalsize(processed_file.stat().st_size, binary=True) if processed_file.is_file() else "N/A")
             })
 
     logs.sort(key=lambda x: x["creation_date"], reverse=True)

@@ -33,5 +33,5 @@
    - Raspberry Pi backend processes recorded data and generates CSV and PDF reports.
 
 4. **Data Retrieval & Shutdown**
-   - Download the ZIP archive containing the raw CAN log, parsed CSV, and PDF report.
+   - Download the ZIP archive containing the raw CAN log, human-readable CSV, and PDF report.
    - Switch off LV to power down the telemetry system.

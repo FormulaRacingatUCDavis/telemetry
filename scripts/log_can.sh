@@ -5,7 +5,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cleanup() {
     kill "$PID" 2>/dev/null
     wait "$PID" 2>/dev/null
-    mv "$REPO_DIR/data/can/intake"/candump-*.log "$REPO_DIR/data/can/process/" 2>/dev/null
+    mv "$REPO_DIR/data/can/intake"/candump-*.log "$REPO_DIR/data/can/staging/" 2>/dev/null
 }
 
 trap cleanup EXIT

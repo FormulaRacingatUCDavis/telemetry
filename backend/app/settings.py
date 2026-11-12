@@ -5,9 +5,10 @@ class Settings(BaseSettings):
     tcan_interface: str
 
     can_intake_path: str
-    can_process_path: str
+    can_staging_path: str
     can_raw_path: str
-    can_parsed_path: str
+    can_processed_path: str
+    can_reports_path: str
 
     dbc_dir: str
 

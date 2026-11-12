@@ -18,8 +18,8 @@ class CANHelper:
         for dbc_path in dbc_dir.glob("*.dbc"):
             self.dbs.append(cantools.db.load_file(dbc_path))
 
-    def generate_parsed(self, path: str):
-        parsed_msgs = []
+    def process_candump(self, path: str):
+        decoded_msgs = []
         signals = set()
         f_ids = set()
         f_count = 0
@@ -45,18 +45,18 @@ class CANHelper:
                     continue
 
                 try:
-                    parsed_data = message.decode(msg.data)
+                    decoded = message.decode(msg.data)
                 except (ValueError, cantools.database.DecodeError) as e:
                     print(f'[LOG PARSER] >> Failed to decode {msg.arbitration_id:X}: {e}')
                     f_count += 1
                     continue
 
-                parsed_msgs.append((
+                decoded_msgs.append((
                     msg.timestamp,
                     message.senders[0] if message.senders else "Unknown",
                     f'{msg.arbitration_id:X}',
                     message.name,
-                    parsed_data
+                    decoded
                 ))
 
                 for signal in message.signals:
@@ -65,7 +65,7 @@ class CANHelper:
         signals_list = sorted(signals)
         data = []
 
-        for timestamp, source, id, msg_name, decoded in parsed_msgs:
+        for timestamp, source, id, msg_name, decoded in decoded_msgs:
             msg = {
                 "Timestamp [s]": timestamp,
                 "Source": source,
@@ -79,25 +79,12 @@ class CANHelper:
             data,
             columns = ["Timestamp [s]", "Source", "ID", "Message"] + signals_list
         )
-        df.to_csv(os.path.join(settings.can_parsed_path, Path(log).with_suffix('.csv')).replace('candump', 'FE14'), index=False)
 
+        df.to_csv(os.path.join(settings.can_processed_path, Path(log).with_suffix('.csv')).replace('candump', 'FE14'), index=False)
         # Generate PDF report
         
         print(f'[LOG PARSER] >> Total failed rows: {f_count}')
         shutil.move(path, os.path.join(settings.can_raw_path, log))
 
-    def get_messages(self, dbc_path):
-        db = cantools.db.load_file(dbc_path)
-        dbc_name = Path(dbc_path).name
-
-        messages = {}
-        for message in db.messages:
-            sender = message.senders[0].lower()
-            if sender not in messages:
-                messages[sender] = {}
-            messages[sender][message.name.lower()] = {
-                "id": message.frame_id,
-                "signals": [signal.name.lower() for signal in message.signals]
-            }
-
-        return {dbc_name: messages}
+    def generate_report(self, df):
+        pass
