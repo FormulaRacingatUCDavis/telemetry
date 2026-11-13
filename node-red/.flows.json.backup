@@ -196,7 +196,7 @@
             },
             {
                 "label": "Processed (CSV)",
-                "value": "parsed",
+                "value": "processed",
                 "type": "str"
             }
         ],
@@ -255,7 +255,7 @@
             },
             {
                 "title": "Size (P)",
-                "key": "file_size_parsed",
+                "key": "file_size_processed",
                 "keyType": "key",
                 "type": "text",
                 "width": "",
@@ -343,7 +343,7 @@
         "type": "function",
         "z": "999c06ba44161ae7",
         "name": "Build ZIP request",
-        "func": "\nconst files = flow.get(\"selectedFiles\") || [];\nconst type = flow.get(\"logType\");\n\nfunction error(message) {\n    return [null, { payload: message }];\n}\n\nif (!files.length || !type) {\n    return error(\"Please select files and a log type.\");\n}\n\nif (type === \"parsed\") {\n    const missing = files.filter(file =>\n        file.file_size_parsed === \"N/A\"\n    );\n\n    if (missing.length > 0) {\n        return error(\n            `${missing.length} selected file(s) have no parsed version.`\n        );\n    }\n}\n\nmsg.payload = {\n    filenames: files.map(file => file.file_name),\n    type: type\n};\n\nmsg.downloadId = msg._msgid;\n\nreturn [msg, null];\n",
+        "func": "\nconst files = flow.get(\"selectedFiles\") || [];\nconst type = flow.get(\"logType\");\n\nfunction error(message) {\n    return [null, { payload: message }];\n}\n\nif (!files.length || !type) {\n    return error(\"Please select files and a log type.\");\n}\n\nif (type === \"processed\") {\n    const missing = files.filter(file =>\n        file.file_size_parsed === \"N/A\"\n    );\n\n    if (missing.length > 0) {\n        return error(\n            `${missing.length} selected file(s) have no parsed version.`\n        );\n    }\n}\n\nmsg.payload = {\n    filenames: files.map(file => file.file_name),\n    type: type\n};\n\nmsg.downloadId = msg._msgid;\n\nreturn [msg, null];\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -373,7 +373,7 @@
         "width": 0,
         "height": 0,
         "head": "",
-        "format": "\n<template>\n  <div style=\"display: none\"></div>\n</template>\n\n<script>\nexport default {\n  watch: {\n    async msg(msg) {\n      if (!msg?.payload?.filenames || !msg?.downloadId) return\n\n      // Prevent duplicate downloads on page refresh\n      const key = \"lastDownloadId\"\n\n      if (sessionStorage.getItem(key) === msg.downloadId) return\n\n      sessionStorage.setItem(key, msg.downloadId)\n\n      const { filenames, type } = msg.payload\n\n      try {\n        const response = await fetch(\n          `http://127.0.0.1:8000/api/can/logs/zip/${type}`,\n          {\n            method: \"POST\",\n            headers: {\n              \"Content-Type\": \"application/json\"\n            },\n            body: JSON.stringify({ filenames })\n          }\n        )\n\n        if (!response.ok) {\n          throw new Error(`HTTP ${response.status}`)\n        }\n\n        const blob = await response.blob()\n        const url = URL.createObjectURL(blob)\n\n        const a = document.createElement(\"a\")\n        a.href = url\n        a.download = \"canlogs.zip\"\n        document.body.appendChild(a)\n        a.click()\n        a.remove()\n\n        setTimeout(() => URL.revokeObjectURL(url), 1000)\n\n      } catch (error) {\n        console.error(\"ZIP download failed:\", error)\n        sessionStorage.removeItem(key)\n      }\n    }\n  }\n}\n</script>\n",
+        "format": "\n<template>\n  <div style=\"display: none\"></div>\n</template>\n\n<script>\nexport default {\n  watch: {\n    async msg(msg) {\n      if (!msg?.payload?.filenames || !msg?.downloadId) return\n\n      const key = \"lastDownloadId\"\n\n      if (sessionStorage.getItem(key) === msg.downloadId) return\n\n      sessionStorage.setItem(key, msg.downloadId)\n\n      const { filenames, type } = msg.payload\n\n      try {\n        const response = await fetch(\n          `http://127.0.0.1:8000/api/can/logs/zip/${type}`,\n          {\n            method: \"POST\",\n            headers: {\n              \"Content-Type\": \"application/json\"\n            },\n            body: JSON.stringify({ filenames })\n          }\n        )\n\n        if (!response.ok) {\n          throw new Error(`HTTP ${response.status}`)\n        }\n\n        const blob = await response.blob()\n        const url = URL.createObjectURL(blob)\n\n        const a = document.createElement(\"a\")\n        a.href = url\n        a.download = `canlogs-${type}.zip`\n        document.body.appendChild(a)\n        a.click()\n        a.remove()\n\n        setTimeout(() => URL.revokeObjectURL(url), 1000)\n\n      } catch (error) {\n        console.error(\"ZIP download failed:\", error)\n        sessionStorage.removeItem(key)\n      }\n    }\n  }\n}\n</script>\n",
         "storeOutMessages": true,
         "passthru": false,
         "resendOnRefresh": true,

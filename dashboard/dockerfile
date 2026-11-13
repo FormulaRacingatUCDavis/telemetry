@@ -16,6 +16,7 @@ RUN apt-get update && \
         tar \
         qt6-base-dev \
         qt6-declarative-dev \
+        can-utils \
         && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

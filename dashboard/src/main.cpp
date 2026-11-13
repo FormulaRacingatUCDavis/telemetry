@@ -89,4 +89,5 @@ void on_message(struct mosquitto* mosq, void* userdata, const struct mosquitto_m
         variable_instance->setloggerindicator(true);
         
     }
+    std::cout << "recieved logging status message" << std::endl;
 }

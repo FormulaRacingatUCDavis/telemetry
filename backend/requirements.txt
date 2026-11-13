@@ -7,3 +7,4 @@ watchfiles
 psycopg
 pydantic-settings
 humanize
+pandas
