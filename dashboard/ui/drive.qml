@@ -8,7 +8,7 @@ Rectangle {
     visible: true
     anchors.fill: parent
     color: "black"
-    border.width: Data.loggerindicator ? speedbox.width * 0.05 : 0
+    border.width: Data.loggerindicator ? mainwindow.width * 0.005 : 0
     border.color: "#FFFFFF"
     
     // for debugging
