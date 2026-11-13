@@ -8,6 +8,8 @@ Rectangle {
     visible: true
     anchors.fill: parent
     color: "black"
+    border.width: Data.loggerindicator ? speedbox.width * 0.05 : 0
+    border.color: "#FFFFFF"
     
     // for debugging
     MouseArea {
@@ -39,8 +41,6 @@ Rectangle {
             Layout.fillHeight: true
             Layout.preferredWidth: grid.width / 2
             Layout.preferredHeight: grid.height / 2
-            border.width: Data.loggerindicator ? speedbox.width * 0.05 : 0
-            border.color: "#FFFFFF"
 
             Text {
                 id: speedvalue
