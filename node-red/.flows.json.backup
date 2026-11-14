@@ -504,7 +504,7 @@
             },
             {
                 "label": "",
-                "value": "",
+                "value": "can/temp",
                 "type": "str"
             }
         ],
@@ -513,10 +513,10 @@
         "topicType": "msg",
         "className": "",
         "x": 160,
-        "y": 740,
+        "y": 780,
         "wires": [
             [
-                "6aaaebc8582defa3"
+                "0440131f33902df9"
             ]
         ]
     },
@@ -654,7 +654,7 @@
         "height": 8,
         "className": "",
         "interpolation": "linear",
-        "x": 1150,
+        "x": 1290,
         "y": 700,
         "wires": [
             []
@@ -735,7 +735,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 1,
-        "x": 770,
+        "x": 650,
         "y": 800,
         "wires": [
             [
@@ -757,7 +757,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 470,
+        "x": 610,
         "y": 880,
         "wires": []
     },
@@ -766,18 +766,20 @@
         "type": "function",
         "z": "999c06ba44161ae7",
         "name": "CanframeHandler",
-        "func": "let topic = msg.payload\n\n// Error handling for empty selections (default)\nif (!topic || typeof topic !== \"string\") {\n    node.error(\"Canframe not selected.\", msg)\n    return null;\n}\n\n// Tell mqtt to subscribe to current selection topic\nmsg.action = \"subscribe\"\nmsg.topic = topic\n\nreturn msg;",
+        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.payload\n\nif (previousTopic == undefined) {\n    context.set(\"canState\", currentTopic)\n} else if (!currentTopic || typeof currentTopic !== \"string\") {\n    // Error handling for empty selections (default)\n    node.error(\"Canframe not selected.\", msg)\n    return null;\n}\n\ncontext.set(\"canState\", currentTopic)\n// Tell mqtt to subscribe to current selection topic\nmsg.action = \"subscribe\"\nmsg.topic = currentTopic\n\nreturn msg",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 570,
-        "y": 800,
+        "x": 390,
+        "y": 780,
         "wires": [
             [
-                "014fa79b2d36edf4"
+                "014fa79b2d36edf4",
+                "3dadd6f23157ffec",
+                "6aaaebc8582defa3"
             ]
         ]
     },
@@ -803,7 +805,7 @@
         "type": "function",
         "z": "999c06ba44161ae7",
         "name": "CanframeHandler",
-        "func": "let message = msg.payload\nlet dataType = message[\"data_type\"]\n\nswitch (dataType) {\n    case \"mcac_power\":\n        msg.payload = message[\"dashboard_state\"];\n        break;\n    default:\n        node.error(\"Data type invalid.\", msg)\n}\n\nreturn msg;",
+        "func": "let message = msg.payload\nlet dataType = message[\"data_type\"]\n\nswitch (dataType) {\n    case \"mcac_power\":\n        msg.payload = message[\"dashboard_state\"];\n        msg.action = \"append\"\n        break;\n    default:\n        node.error(\"Data type invalid.\", msg)\n}\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -841,20 +843,18 @@
         "type": "function",
         "z": "999c06ba44161ae7",
         "name": "ChartHandler",
-        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.payload\n\nif (previousTopic == undefined) {\n    context.set(\"canState\", currentTopic)\n    msg.payload = currentTopic\n}\n\n// Checks if selection has changed\n// Used to clear chart data array for new data stream\nif (previousTopic !== currentTopic) {\n    msg.payload = []\n    context.set(\"canState\", currentTopic)\n}\n\nreturn msg",
+        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.payload\n\n// Checks if selection has changed\n// Used to clear chart data array for new data stream\nif (previousTopic !== currentTopic) {\n    msg.payload = []\n    return msg\n}\n\nreturn null",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 370,
-        "y": 740,
+        "x": 610,
+        "y": 700,
         "wires": [
             [
-                "0440131f33902df9",
-                "94e82c839d193d5c",
-                "3dadd6f23157ffec"
+                "94e82c839d193d5c"
             ]
         ]
     }
