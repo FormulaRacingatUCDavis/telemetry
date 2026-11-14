@@ -8,3 +8,4 @@ psycopg
 pydantic-settings
 humanize
 pandas
+fpdf2

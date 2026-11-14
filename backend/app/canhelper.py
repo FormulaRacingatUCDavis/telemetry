@@ -6,6 +6,7 @@ from pathlib import Path
 from .settings import settings
 
 import pandas as pd
+from fpdf import FPDF
 
 class CANHelper:
     """
@@ -19,6 +20,9 @@ class CANHelper:
             self.dbs.append(cantools.db.load_file(dbc_path))
 
     def process_candump(self, path: str):
+        """
+        Processes vehicle CAN bus data to generate a human-readable CSV and PDF report
+        """
         decoded_msgs = []
         signals = set()
         f_ids = set()
@@ -75,16 +79,40 @@ class CANHelper:
             msg.update(decoded)
             data.append(msg)
 
+        log_name = Path(log.replace('candump', 'FE14')).stem
         df = pd.DataFrame(
             data,
             columns = ["Timestamp [s]", "Source", "ID", "Message"] + signals_list
         )
 
-        df.to_csv(os.path.join(settings.can_processed_path, Path(log).with_suffix('.csv')).replace('candump', 'FE14'), index=False)
-        # Generate PDF report
+        df.to_csv(os.path.join(settings.can_processed_path, log_name + '.csv'), index=False)
+        self.generate_report(df, log_name)
         
         print(f'[LOG PARSER] >> Total failed rows: {f_count}')
         shutil.move(path, os.path.join(settings.can_raw_path, log))
 
-    def generate_report(self, df):
-        pass
+    def generate_report(self, df, log):
+        """
+        Generate post-run PDF report
+        """
+        report_path = Path(settings.can_reports_path)
+        report_path.mkdir(parents=True, exist_ok=True)
+        pdf = FPDF()
+        pdf.add_page()
+        
+        pdf.set_font('Helvetica', style='B')
+        pdf.cell(0, 15, f"FRUCD Track Day Report: {log}", align='C', new_x='LMARGIN', new_y='NEXT')
+
+        pdf.cell(0, 15, text='Run Summary', new_x='LMARGIN', new_y='NEXT')
+        # Table with CAN bus health metrics
+
+        pdf.cell(0, 15, text='CAN Bus Health', new_x='LMARGIN', new_y='NEXT')
+        # Table with CAN bus health metrics
+
+        pdf.cell(0, 15, text='Vehicle Performance', new_x='LMARGIN', new_y='NEXT')
+        # Table with CAN bus health metrics
+
+        pdf.cell(0, 15, text='Raspberry Pi Performance', new_x='LMARGIN', new_y='NEXT')
+        # Table with CAN bus health metrics
+
+        pdf.output(str(report_path / f'{log}.pdf'))
