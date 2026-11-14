@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         // subscribe to logger indicator
         mosquitto_lib_init();
         struct mosquitto* mosq = mosquitto_new("logger-subscriber", true, nullptr);
-        int rc = mosquitto_connect(mosq, "mosquitto", 1883, 60); // make sure cstring matches mqtt ontainer name matches 
+        int rc = mosquitto_connect(mosq, "localhost", 1883, 60); // string should match where mosquitto is
         if (rc != MOSQ_ERR_SUCCESS)
         {
             std::cerr << "MQTT connect failed: " << mosquitto_strerror(rc) << std::endl;
