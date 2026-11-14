@@ -46,6 +46,7 @@ int main()
         {
             uint32_t id = (cap.frame.can_id & CAN_EFF_FLAG) ? (cap.frame.can_id & CAN_EFF_MASK) : (cap.frame.can_id & CAN_SFF_MASK);
             nlohmann::json j;
+            std::string payload;
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(cap.timestamp.time_since_epoch()).count();
 
             switch (id)
@@ -56,10 +57,12 @@ int main()
                     fe13_db_vehicle_state_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "vehicle_state"
                     uint8_t vcu_state_code = fe13_db_vehicle_state_dashboard_state_decode(msg.dashboard_state);
                     j["dashboard_state"] = (telem::VEHICLE_STATE.find(vcu_state_code) != telem::VEHICLE_STATE.end()) ? telem::VEHICLE_STATE.at(vcu_state_code) : "YO WTF?";
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/dashboard_state", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -69,9 +72,11 @@ int main()
                     fe13_db_torque_request_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "torque_request"
                     j["dashboard_torque"] = fe13_db_torque_request_dashboard_torque_decode(msg.dashboard_torque);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/torque_request", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -81,11 +86,16 @@ int main()
                     cm200_db_m160_temperature_set_1_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "m160_temperature"
                     j["inv_module_a_temp"] = cm200_db_m160_temperature_set_1_inv_module_a_temp_decode(msg.inv_module_a_temp);
                     j["inv_module_b_temp"] = cm200_db_m160_temperature_set_1_inv_module_b_temp_decode(msg.inv_module_b_temp);
                     j["inv_module_c_temp"] = cm200_db_m160_temperature_set_1_inv_module_c_temp_decode(msg.inv_module_c_temp);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/inv_module_a_temp", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/inv_module_b_temp", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/inv_module_c_temp", payload.size(), payload.c_str(), 0, false);
+
 
                     break;
                 }
@@ -95,9 +105,11 @@ int main()
                     cm200_db_m165_motor_position_info_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "motor_position_info"
                     j["inv_motor_speed"] = cm200_db_m165_motor_position_info_inv_motor_speed_decode(msg.inv_motor_speed);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/inv_motor_speed", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -107,9 +119,11 @@ int main()
                     fe13_db_current_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "current"
                     j["pei_current"] = fe13_db_current_pei_current_decode(msg.pei_current);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/pei_current", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -119,10 +133,12 @@ int main()
                     fe13_db_bms_status_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "bms_status"
                     uint8_t bms_state_code = fe13_db_bms_status_pei_bms_status_decode(msg.pei_bms_status);
                     j["pei_bms_status"] = (telem::BMS_STATE.find(bms_state_code) != telem::BMS_STATE.end()) ? telem::BMS_STATE.at(bms_state_code) : "YO WTF?";
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/pei_bms_status", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -132,10 +148,13 @@ int main()
                     fe13_db_diagnostic_bms_data_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "diagnostic_bms"
                     j["pei_soc"] = fe13_db_diagnostic_bms_data_pei_soc_decode(msg.pei_soc);
                     j["pei_pack_voltage"] = fe13_db_diagnostic_bms_data_pei_pack_voltage_decode(msg.pei_pack_voltage);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/pei_soc", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/pei_pack_voltage", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -145,10 +164,13 @@ int main()
                     fe13_db_mcac_power_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "mcac_power"
                     j["motor_power"] = fe13_db_mcac_power_motor_power_decode(msg.motor_power);
                     j["acc_power"] = fe13_db_mcac_power_acc_power_decode(msg.acc_power);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/motor_power", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/acc_power", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -158,10 +180,13 @@ int main()
                     fe13_db_cooling_loop_temps_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "cooling_loop_temp"
                     j["inlet_water_temp"] = fe13_db_cooling_loop_temps_telem_node_inlet_water_temp_decode(msg.telem_node_inlet_water_temp);
                     j["outlet_water_temp"] = fe13_db_cooling_loop_temps_telem_node_outlet_water_temp_decode(msg.telem_node_outlet_water_temp);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/inlet_water_temp", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/acc_pooutlet_water_tempwer", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -174,10 +199,13 @@ int main()
                     uint32_t run_fault_code = (static_cast<uint32_t>(msg.inv_run_fault_hi) << 16) | static_cast<uint32_t>(msg.inv_run_fault_lo);
 
                     j["id"] = id;
-                    j["data_type"] = "fault"
                     j["inv_post_fault"] = (telem::MC_STATE.find(post_fault_code) != telem::MC_STATE.end()) ? telem::MC_STATE.at(post_fault_code) : "YO WTF?";
                     j["inv_run_fault"] = (telem::MC_STATE.find(run_fault_code) != telem::MC_STATE.end()) ? telem::MC_STATE.at(run_fault_code) : "YO WTF?";
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/inv_post_fault", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/inv_run_fault", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -187,13 +215,19 @@ int main()
                     fe13_db_bms_temps_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "bms_temp"
                     j["pei_subpack"] = fe13_db_bms_temps_pei_subpack_decode(msg.pei_subpack);
                     j["pei_group"] = fe13_db_bms_temps_pei_group_decode(msg.pei_group);
                     j["pei_temp_1"] = fe13_db_bms_temps_pei_temp_1_decode(msg.pei_temp_1);
                     j["pei_temp_2"] = fe13_db_bms_temps_pei_temp_2_decode(msg.pei_temp_2);
                     j["pei_temp_3"] = fe13_db_bms_temps_pei_temp_3_decode(msg.pei_temp_3);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/pei_subpack", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/pei_group", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/pei_temp_1", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/pei_temp_2", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/pei_temp_3", payload.size(), payload.c_str(), 0, false);
 
                     break;
                 }
@@ -203,10 +237,14 @@ int main()
                     fe13_db_lat_lon_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "lat_lon"
                     j["latitude"] = fe13_db_lat_lon_latitude_decode(msg.latitude);
                     j["longitude"] = fe13_db_lat_lon_longitude_decode(msg.longitude);
                     j["timestamp"] = ms;
+
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/latitude", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/longitude", payload.size(), payload.c_str(), 0, false);
+                    
 
                     break;
                 }
@@ -216,21 +254,18 @@ int main()
                     fe13_db_acceleration_unpack(&msg, cap.frame.data, cap.frame.can_dlc);
 
                     j["id"] = id;
-                    j["data_type"] = "acceleration"
                     j["accel_x"] = fe13_db_acceleration_accel_x_decode(msg.accel_x);
                     j["accel_y"] = fe13_db_acceleration_accel_y_decode(msg.accel_y);
                     j["accel_z"] = fe13_db_acceleration_accel_z_decode(msg.accel_z);
                     j["timestamp"] = ms;
 
+                    payload = j.dump();
+                    mosquitto_publish(mosq, nullptr, "can/accel_x", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/accel_y", payload.size(), payload.c_str(), 0, false);
+                    mosquitto_publish(mosq, nullptr, "can/accel_z", payload.size(), payload.c_str(), 0, false);
+
                     break;
                 }
-            }
-
-            if (!j.empty())
-            {
-                std::string payload = j.dump();
-                
-                mosquitto_publish(mosq, nullptr, "can/" + j[data_type], payload.size(), payload.c_str(), 0, false);
             }
         }
         else

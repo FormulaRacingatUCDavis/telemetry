@@ -8,23 +8,35 @@
         "env": []
     },
     {
-        "id": "5755c454fca6f8be",
-        "type": "ui-theme",
-        "name": "Default Theme",
-        "colors": {
-            "surface": "#fcfcfd",
-            "primary": "#0d74ce",
-            "bgPage": "#f9f9fb",
-            "groupBg": "#ffffff",
-            "groupOutline": "#d9d9e0"
-        },
-        "sizes": {
-            "density": "default",
-            "pagePadding": "12px",
-            "groupGap": "12px",
-            "groupBorderRadius": "4px",
-            "widgetGap": "12px"
-        }
+        "id": "57a85c435fd57d89",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
     },
     {
         "id": "175d0a9d1423c451",
@@ -45,6 +57,25 @@
         "notificationDisplayTime": 1,
         "showDisconnectNotification": true,
         "allowInstall": false
+    },
+    {
+        "id": "5755c454fca6f8be",
+        "type": "ui-theme",
+        "name": "Default Theme",
+        "colors": {
+            "surface": "#fcfcfd",
+            "primary": "#0d74ce",
+            "bgPage": "#f9f9fb",
+            "groupBg": "#ffffff",
+            "groupOutline": "#d9d9e0"
+        },
+        "sizes": {
+            "density": "default",
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
     },
     {
         "id": "6169d039ac9e9d01",
@@ -112,37 +143,6 @@
         "disabled": "false",
         "groupType": "default",
         "tab": ""
-    },
-    {
-        "id": "57a85c435fd57d89",
-        "type": "mqtt-broker",
-        "name": "",
-        "broker": "localhost",
-        "port": 1883,
-        "clientid": "",
-        "autoConnect": true,
-        "usetls": false,
-        "protocolVersion": 4,
-        "keepalive": 60,
-        "cleansession": true,
-        "autoUnsubscribe": true,
-        "birthTopic": "",
-        "birthQos": "0",
-        "birthRetain": "false",
-        "birthPayload": "",
-        "birthMsg": {},
-        "closeTopic": "",
-        "closeQos": "0",
-        "closeRetain": "false",
-        "closePayload": "",
-        "closeMsg": {},
-        "willTopic": "",
-        "willQos": "0",
-        "willRetain": "false",
-        "willPayload": "",
-        "willMsg": {},
-        "userProps": "",
-        "sessionExpiry": ""
     },
     {
         "id": "3eb72aeff7f65baf",
@@ -332,6 +332,142 @@
         ]
     },
     {
+        "id": "014fa79b2d36edf4",
+        "type": "mqtt in",
+        "z": "999c06ba44161ae7",
+        "name": "",
+        "topic": "",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "57a85c435fd57d89",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 1,
+        "x": 650,
+        "y": 800,
+        "wires": [
+            [
+                "696e989aa1a73ed8",
+                "99468b103ff3f9f0"
+            ]
+        ]
+    },
+    {
+        "id": "3dadd6f23157ffec",
+        "type": "debug",
+        "z": "999c06ba44161ae7",
+        "name": "Current canframe",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "topic",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "0440131f33902df9",
+        "type": "function",
+        "z": "999c06ba44161ae7",
+        "name": "CanframeHandler",
+        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.payload\n\n\nif (!currentTopic || typeof currentTopic !== \"string\") {\n   // Error handling for empty selections (default)\n   node.error(\"Canframe not selected.\", msg)\n   return null;\n}\n\n\nlet mqttInput = []\n\n// Unsubscribe from previous topic\nif (previousTopic !== undefined) {\n   mqttInput.push({action: \"unsubscribe\", topic: previousTopic})\n}\n\n// Tell mqtt to subscribe to current selection topic\nmqttInput.push({action: \"subscribe\", topic: currentTopic})\n\ncontext.set(\"canState\", currentTopic)\n\n\nreturn [mqttInput]\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 780,
+        "wires": [
+            [
+                "014fa79b2d36edf4",
+                "6aaaebc8582defa3",
+                "3dadd6f23157ffec"
+            ]
+        ]
+    },
+    {
+        "id": "696e989aa1a73ed8",
+        "type": "debug",
+        "z": "999c06ba44161ae7",
+        "name": "Canframe Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "99468b103ff3f9f0",
+        "type": "function",
+        "z": "999c06ba44161ae7",
+        "name": "DataHandler",
+        "func": "// {id: signals}\nlet data = msg.payload\nlet signal = msg.topic.split(\"/\")[1]\n\n\n// const liveValues = {\n//     0x766: ['dashboard_state'],\n//     0x380: ['pei_bms_status'],\n//     0xab:  ['inv_run_fault', 'inv_post_fault'],\n//     0xc0:  ['dashboard_torque'],\n//     0xa0:  ['inv_module_a_temp', 'inv_module_b_temp', 'inv_module_c_temp'],\n//     0xa5:  ['inv_motor_speed'],\n//     0x381: ['pei_soc', 'pei_pack_voltage'],\n//     0x384: ['pei_subpack', 'pei_group', 'pei_temp_1', 'pei_temp_2', 'pei_temp_3'],\n//     0x388: ['pei_current'],\n//     0x504: ['motor_power', 'acc_power'],\n//     0x400: ['inlet_water_temp', 'outlet_water_temp'],\n//     0x480: [ 'latitude', 'longitude' ],\n//     0x113: [ 'accel_x', 'accel_y', 'accel_z' ]\n// };\n\n\n// let signals = liveValues[data[\"id\"]]\n\n\n// if (signals) {\n//     for (const signal of signals) {\n//         if (signal in data)\n//             msg.payload = data[signal]\n//     }\n// } else {\n//     node.error(\"Message could not be found.\", msg)\n// }\n\n\nmsg.payload = data[signal]\n\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 950,
+        "y": 800,
+        "wires": [
+            [
+                "4024201e860a2bd4",
+                "94e82c839d193d5c"
+            ]
+        ]
+    },
+    {
+        "id": "4024201e860a2bd4",
+        "type": "debug",
+        "z": "999c06ba44161ae7",
+        "name": "Data Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1170,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "6aaaebc8582defa3",
+        "type": "function",
+        "z": "999c06ba44161ae7",
+        "name": "ChartHandler",
+        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.topic\n\n\n// Checks if selection has changed\n// Used to clear chart data array for new data stream\nif (previousTopic !== currentTopic) {\n   msg.payload = []\n   msg.action = \"replace\"\n   return msg\n}\n\n\nreturn null\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 700,
+        "wires": [
+            [
+                "94e82c839d193d5c"
+            ]
+        ]
+    },
+    {
         "id": "2efcc844c6e4805c",
         "type": "ui-button",
         "z": "999c06ba44161ae7",
@@ -485,42 +621,6 @@
         ]
     },
     {
-        "id": "39da493ac7aafa74",
-        "type": "ui-radio-group",
-        "z": "999c06ba44161ae7",
-        "group": "80bcc988a33ffde4",
-        "name": "",
-        "label": "Select Option:",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "columns": 1,
-        "passthru": false,
-        "options": [
-            {
-                "label": "MCAC Power",
-                "value": "can/mcac_power",
-                "type": "str"
-            },
-            {
-                "label": "",
-                "value": "can/temp",
-                "type": "str"
-            }
-        ],
-        "payload": "",
-        "topic": "topic",
-        "topicType": "msg",
-        "className": "",
-        "x": 160,
-        "y": 780,
-        "wires": [
-            [
-                "0440131f33902df9"
-            ]
-        ]
-    },
-    {
         "id": "2cc12a2a47dc101a",
         "type": "ui-text",
         "z": "999c06ba44161ae7",
@@ -599,6 +699,30 @@
         ]
     },
     {
+        "id": "e221a1f6b94791c5",
+        "type": "ui-notification",
+        "z": "999c06ba44161ae7",
+        "ui": "175d0a9d1423c451",
+        "position": "top right",
+        "colorDefault": true,
+        "color": "#000000",
+        "displayTime": "3",
+        "showCountdown": true,
+        "outputs": 1,
+        "allowDismiss": true,
+        "dismissText": "Close",
+        "allowConfirm": false,
+        "confirmText": "Confirm",
+        "raw": false,
+        "className": "",
+        "name": "Warn (no processed file)",
+        "x": 710,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "94e82c839d193d5c",
         "type": "ui-chart",
         "z": "999c06ba44161ae7",
@@ -661,30 +785,6 @@
         ]
     },
     {
-        "id": "e221a1f6b94791c5",
-        "type": "ui-notification",
-        "z": "999c06ba44161ae7",
-        "ui": "175d0a9d1423c451",
-        "position": "top right",
-        "colorDefault": true,
-        "color": "#000000",
-        "displayTime": "3",
-        "showCountdown": true,
-        "outputs": 1,
-        "allowDismiss": true,
-        "dismissText": "Close",
-        "allowConfirm": false,
-        "confirmText": "Confirm",
-        "raw": false,
-        "className": "",
-        "name": "Warn (no processed file)",
-        "x": 710,
-        "y": 340,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "69ab87a0b7b48fe4",
         "type": "ui-template",
         "z": "999c06ba44161ae7",
@@ -723,139 +823,78 @@
         ]
     },
     {
-        "id": "014fa79b2d36edf4",
-        "type": "mqtt in",
+        "id": "9c1f0c2e2f600ff4",
+        "type": "ui-dropdown",
         "z": "999c06ba44161ae7",
+        "group": "80bcc988a33ffde4",
         "name": "",
-        "topic": "",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "57a85c435fd57d89",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 1,
-        "x": 650,
-        "y": 800,
-        "wires": [
-            [
-                "696e989aa1a73ed8",
-                "99468b103ff3f9f0"
-            ]
-        ]
-    },
-    {
-        "id": "3dadd6f23157ffec",
-        "type": "debug",
-        "z": "999c06ba44161ae7",
-        "name": "Current canframe",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 610,
-        "y": 880,
-        "wires": []
-    },
-    {
-        "id": "0440131f33902df9",
-        "type": "function",
-        "z": "999c06ba44161ae7",
-        "name": "CanframeHandler",
-        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.payload\n\nif (previousTopic == undefined) {\n    context.set(\"canState\", currentTopic)\n} else if (!currentTopic || typeof currentTopic !== \"string\") {\n    // Error handling for empty selections (default)\n    node.error(\"Canframe not selected.\", msg)\n    return null;\n}\n\ncontext.set(\"canState\", currentTopic)\n// Tell mqtt to subscribe to current selection topic\nmsg.action = \"subscribe\"\nmsg.topic = currentTopic\n\nreturn msg",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
+        "label": "Select Option:",
+        "tooltip": "",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "multiple": false,
+        "chips": false,
+        "clearable": true,
+        "options": [
+            {
+                "label": "dashboard_state",
+                "value": "can/dashboard_state",
+                "type": "str"
+            },
+            {
+                "label": "pei_bms_status",
+                "value": "can/pei_bms_status",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "payload",
+        "topicType": "msg",
+        "className": "",
+        "typeIsComboBox": true,
+        "msgTrigger": "onChange",
+        "x": 160,
         "y": 780,
         "wires": [
             [
-                "014fa79b2d36edf4",
-                "3dadd6f23157ffec",
-                "6aaaebc8582defa3"
+                "0440131f33902df9"
             ]
         ]
     },
     {
-        "id": "696e989aa1a73ed8",
-        "type": "debug",
+        "id": "39da493ac7aafa74",
+        "type": "ui-radio-group",
         "z": "999c06ba44161ae7",
-        "name": "Canframe Output",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 950,
-        "y": 920,
-        "wires": []
-    },
-    {
-        "id": "99468b103ff3f9f0",
-        "type": "function",
-        "z": "999c06ba44161ae7",
-        "name": "CanframeHandler",
-        "func": "let message = msg.payload\nlet dataType = message[\"data_type\"]\n\nswitch (dataType) {\n    case \"mcac_power\":\n        msg.payload = message[\"dashboard_state\"];\n        msg.action = \"append\"\n        break;\n    default:\n        node.error(\"Data type invalid.\", msg)\n}\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 970,
-        "y": 800,
+        "group": "80bcc988a33ffde4",
+        "name": "",
+        "label": "Select Option:",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "columns": 1,
+        "passthru": false,
+        "options": [
+            {
+                "label": "MCAC Power",
+                "value": "can/mcac_power",
+                "type": "str"
+            },
+            {
+                "label": "",
+                "value": "can/temp",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 160,
+        "y": 860,
         "wires": [
-            [
-                "4024201e860a2bd4",
-                "94e82c839d193d5c"
-            ]
-        ]
-    },
-    {
-        "id": "4024201e860a2bd4",
-        "type": "debug",
-        "z": "999c06ba44161ae7",
-        "name": "Data Output",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1170,
-        "y": 880,
-        "wires": []
-    },
-    {
-        "id": "6aaaebc8582defa3",
-        "type": "function",
-        "z": "999c06ba44161ae7",
-        "name": "ChartHandler",
-        "func": "let previousTopic = context.get(\"canState\")\nlet currentTopic = msg.payload\n\n// Checks if selection has changed\n// Used to clear chart data array for new data stream\nif (previousTopic !== currentTopic) {\n    msg.payload = []\n    return msg\n}\n\nreturn null",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 610,
-        "y": 700,
-        "wires": [
-            [
-                "94e82c839d193d5c"
-            ]
+            []
         ]
     }
 ]
