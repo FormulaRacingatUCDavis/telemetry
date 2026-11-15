@@ -8,4 +8,5 @@ psycopg
 pydantic-settings
 humanize
 pandas
-fpdf2
+plotly
+Jinja2

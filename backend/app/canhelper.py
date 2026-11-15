@@ -6,7 +6,10 @@ from pathlib import Path
 from .settings import settings
 
 import pandas as pd
-from fpdf import FPDF
+import plotly.express as px
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+from jinja2 import Environment, FileSystemLoader
 
 class CANHelper:
     """
@@ -93,26 +96,101 @@ class CANHelper:
 
     def generate_report(self, df, log):
         """
-        Generate post-run PDF report
+        Generate an interactive HTML report
         """
         report_path = Path(settings.can_reports_path)
         report_path.mkdir(parents=True, exist_ok=True)
-        pdf = FPDF()
-        pdf.add_page()
-        
-        pdf.set_font('Helvetica', style='B')
-        pdf.cell(0, 15, f"FRUCD Track Day Report: {log}", align='C', new_x='LMARGIN', new_y='NEXT')
 
-        pdf.cell(0, 15, text='Run Summary', new_x='LMARGIN', new_y='NEXT')
-        # Table with CAN bus health metrics
+        template_dir = Path(__file__).resolve().parent / "templates"
+        env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
+        template = env.get_template("report.html")
 
-        pdf.cell(0, 15, text='CAN Bus Health', new_x='LMARGIN', new_y='NEXT')
-        # Table with CAN bus health metrics
+        # CALCULATE CAN BUS LOADS, FREQUENCIES, COUNT, JITTER
 
-        pdf.cell(0, 15, text='Vehicle Performance', new_x='LMARGIN', new_y='NEXT')
-        # Table with CAN bus health metrics
+        busPlots = make_subplots(rows=1, cols=2, subplot_titles=("PCAN Bus Load [%]", "TCAN Bus Load [%]"))
+        busPlots.add_trace(
+            go.Scatter(x=[1, 2, 3], y=[4, 5, 6]),
+            row=1, col=1
+        )
+        busPlots.add_trace(
+            go.Scatter(x=[20, 30, 40], y=[50, 60, 70]),
+            row=1, col=2
+        )
+        busPlots.update_layout(title_text=f"{log}: CAN Bus Loads")
 
-        pdf.cell(0, 15, text='Raspberry Pi Performance', new_x='LMARGIN', new_y='NEXT')
-        # Table with CAN bus health metrics
+        canTable = go.Figure(data=[
+            go.Table(
+                header=dict(values=["ID", "Source", "Frequency [Hz]", "Count", "Jitter [s]"]),
+                cells=dict(values=[
+                    [hex(0x766), hex(0x381)],
+                    ["VCU", "PEI"],
+                    ["Not yet available"] * 2,
+                    ["Not yet available"] * 2,
+                    ["Not yet available"] * 2,
+                ])
+            )
+        ])
+        canTable.update_layout(title=f"{log}: CAN Bus Networks")
 
-        pdf.output(str(report_path / f'{log}.pdf'))
+        # LOG RASPBERRY PI SYSTEM PERFORMANCE DATA AND LOAD INTO PANDAS DATAFRAME
+
+        sysTable = go.Figure(data=[
+            go.Table(
+                header=dict(values=["Metric", "Value"]),
+                cells=dict(values=[
+                    [
+                        "CPU Utilization [%]",
+                        "CPU Load Average (1 min)",
+                        "Memory Utilization [%]",
+                        "Available Memory [MB]",
+                        "Swap Utilization [%]",
+                        "Disk Read Throughput [KB/s]",
+                        "Disk Write Throughput [KB/s]",
+                        "Disk I/O Latency [ms]",
+                        "Network RX [KB/s]",
+                        "Network TX [KB/s]",
+                        "Network Errors",
+                        "SoC Temperature [°C]",
+                        "ARM Clock Frequency [MHz]",
+                        "Core Voltage [V]",
+                        "Undervoltage Events",
+                        "Thermal Throttling Events"
+                    ],
+                    ["Not yet available"] * 16
+                ])
+            )
+        ])
+        sysTable.update_layout(title=f"{log}: System Performance", height=600)
+
+        figs = [
+            busPlots,
+            canTable,
+            px.scatter(
+                df.dropna(subset=["INV_Motor_Speed"]),
+                x=df.dropna(subset=["INV_Motor_Speed"])["Timestamp [s]"] - df["Timestamp [s]"].min(),
+                y="INV_Motor_Speed",
+                title=f"{log}: Motor Speed",
+                labels={"x": "Elapsed Time [s]", "INV_Motor_Speed": "Motor Speed [RPM]"}
+            ),
+            sysTable
+        ]
+
+        plots = []
+        for i, fig in enumerate(figs):
+            plots.append(
+                fig.to_html(
+                    full_html=False,
+                    include_plotlyjs=(i == 0),
+                    config={
+                        "responsive": True,
+                        "toImageButtonOptions": {
+                            "format": "png",
+                            "scale": 2
+                        }
+                    }
+                )
+            )
+
+        html = template.render(title=log, plots=plots)
+        output = report_path / f"{log}.html"
+        output.write_text(html, encoding="utf-8")
