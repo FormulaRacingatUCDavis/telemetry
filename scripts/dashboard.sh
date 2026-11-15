@@ -16,7 +16,7 @@ export DISPLAY=:1
 xhost +SI:localuser:root
 
 # runs dashboard
-docker run --rm -dt \
+docker run --rm -it \
   --network host \
   -e DISPLAY=$DISPLAY \
   -e QT_QPA_PLATFORM=xcb \

@@ -20,7 +20,7 @@ set(DAQ_SOURCES
     src/cm200_db.c
 
     inc/variables.h
-    inc/logthread.h
+    inc/decodecanthread.h
 )
 
 set(DASHBOARD_RESOURCES dashboard.qrc)

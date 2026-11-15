@@ -9,7 +9,6 @@ Window {
     // size of the dashboard but will be unused if we set fullscreen
     width: 800 
     height: 480
-    // need to implement when to be full screen
     // visibility: Window.FullScreen
     Shortcut {
         sequences: ["Escape"]

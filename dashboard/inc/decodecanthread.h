@@ -8,7 +8,7 @@
 
 namespace dashboard
 {
-    class Logthread : public QObject
+    class DecodeCanThread : public QObject
     {
         Q_OBJECT
 
@@ -17,11 +17,13 @@ namespace dashboard
         dashboard::CANManager* canManager = nullptr; 
 
     public slots:
-
-        void startContinuousLogging()
+        
+        void startContinuousDecoding()
         {
-            
-            while (true)
+            QThread *currThread = QThread::currentThread();
+
+            // checks if interruption signal is requested by thread it is on
+            while (!currThread->isInterruptionRequested())
             {
                 canManager->decode_can(dashboard::Variables::instance());   
                 QThread::msleep(1);
