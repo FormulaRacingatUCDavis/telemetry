@@ -1,16 +1,13 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    pcan_interface: str
-    tcan_interface: str
+    CAN_INTAKE_PATH: str
+    CAN_STAGING_PATH: str
+    CAN_RAW_PATH: str
+    CAN_PROCESSED_PATH: str
+    CAN_REPORTS_PATH: str
 
-    can_intake_path: str
-    can_staging_path: str
-    can_raw_path: str
-    can_processed_path: str
-    can_reports_path: str
-
-    dbc_dir: str
+    DBC_DIR: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
