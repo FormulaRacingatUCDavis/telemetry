@@ -7,9 +7,7 @@ Rectangle {
     id: mainwindow
     visible: true
     anchors.fill: parent
-    color: "black"
-    border.width: Data.loggerindicator ? mainwindow.width * 0.005 : 0
-    border.color: "#FFFFFF"
+    color: Data.loggerindicator ? "black" : "white"
     
     // for debugging
     MouseArea {
@@ -19,9 +17,11 @@ Rectangle {
         }
     }
 
-    property real fullfontsize: mainwindow.width * 0.08
-    property real smallerfontsize: mainwindow.width * 0.065
+    property real fullfontsize: mainwindow.width * 0.11
+    property real smallerfontsize: mainwindow.width * 0.08
     property real titlefontsize: mainwindow.width * 0.04
+
+    property string titleColor: Data.loggerindicator ? "yellow" : "black"
     
     GridLayout {
         id: grid
@@ -45,7 +45,7 @@ Rectangle {
             Text {
                 id: speedvalue
                 text: (Data.mph == -1) ? "" : "" + Data.mph
-                font.pixelSize: mainwindow.fullfontsize
+                font.pixelSize: mainwindow.fullfontsize * 1.5
                 font.family: mainpage.typeface
                 font.bold: true
                 color: "black"
@@ -60,7 +60,7 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainpage.typeface
                 font.bold: true
-                color: "yellow"
+                color: mainwindow.titleColor
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -101,7 +101,7 @@ Rectangle {
                     font.pixelSize: mainwindow.titlefontsize
                     font.family: mainpage.typeface
                     font.bold: true
-                    color: "yellow"
+                    color: mainwindow.titleColor
                     anchors.left: parent.left
                     anchors.right: parent.right
                     horizontalAlignment: Text.AlignHCenter
@@ -158,7 +158,7 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainpage.typeface
                 font.bold: true
-                color: "yellow"
+                color: mainwindow.titleColor
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter
@@ -193,7 +193,7 @@ Rectangle {
                 font.pixelSize: mainwindow.titlefontsize
                 font.family: mainpage.typeface
                 font.bold: true
-                color: "yellow"
+                color: mainwindow.titleColor
                 anchors.left: parent.left
                 anchors.right: parent.right
                 horizontalAlignment: Text.AlignHCenter

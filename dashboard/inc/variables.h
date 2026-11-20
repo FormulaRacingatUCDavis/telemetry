@@ -56,7 +56,11 @@ namespace dashboard
 
         Q_PROPERTY(int launchcontrol READ launchcontrol NOTIFY launchcontrolChanged)
 
-        Q_PROPERTY(int whichPopupVisible READ whichPopupVisible NOTIFY whichPopupVisibleChanged)
+        Q_PROPERTY(int torquelimitPopupVisible READ torquelimitPopupVisible NOTIFY torquelimitPopupVisibleChanged)
+
+        Q_PROPERTY(int launchcontrolPopupVisible READ launchcontrolPopupVisible NOTIFY launchcontrolPopupVisibleChanged)
+
+        Q_PROPERTY(int faultPopupVisible READ faultPopupVisible NOTIFY faultPopupVisibleChanged)
 
         Q_PROPERTY(QString dashboardpage READ dashboardpage NOTIFY dashboardpageChanged)
 
@@ -111,7 +115,11 @@ namespace dashboard
 
         int launchcontrol();
 
-        int whichPopupVisible();
+        bool torquelimitPopupVisible();
+
+        bool launchcontrolPopupVisible();
+
+        bool faultPopupVisible();
 
         QString dashboardpage();
 
@@ -156,7 +164,7 @@ namespace dashboard
         void setlaunchcontrol(int param);
 
         void showEventPopUp(int which);
-        Q_INVOKABLE void hidePopup();
+        Q_INVOKABLE void hidePopup(int which);
 
         void setdashboardpage(int page);
 
@@ -205,7 +213,11 @@ namespace dashboard
 
         void launchcontrolChanged();
 
-        void whichPopupVisibleChanged();
+        void torquelimitPopupVisibleChanged();
+
+        void launchcontrolPopupVisibleChanged();
+
+        void faultPopupVisibleChanged();
 
         void dashboardpageChanged();
 
@@ -265,14 +277,14 @@ namespace dashboard
 
         int m_launchcontrol = 0;
 
-        int m_whichPopupVisible = -1;
-        // -1 no flashscreens
-        // 0 state
-        // 1 knob1
-        // 2 knob2
-        QString prev_vehicle_state = "";
+        bool m_torquelimitPopupVisible = false;        
         int prev_knob1_val = m_torquelimit;
+
+        bool m_launchcontrolPopupVisible = false;
         int prev_knob2_val = m_launchcontrol;
+
+        bool m_faultPopupVisible = false;
+        QString prev_vehicle_state = "";
 
         QString m_dashboardpage = "drive.qml";
 

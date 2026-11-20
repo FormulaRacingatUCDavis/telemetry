@@ -84,8 +84,16 @@ namespace dashboard
         return m_launchcontrol;
     }
 
-    int Variables::whichPopupVisible() {
-        return m_whichPopupVisible;
+    bool Variables::torquelimitPopupVisible() {
+        return m_torquelimitPopupVisible;
+    }
+
+    bool Variables::launchcontrolPopupVisible() {
+        return m_launchcontrolPopupVisible;
+    }
+
+    bool Variables::faultPopupVisible() {
+        return m_faultPopupVisible;
     }
 
     QString Variables::dashboardpage() {
@@ -132,23 +140,28 @@ namespace dashboard
             switch (state) {
                 case 0:
                     m_vehiclestate = "LV";
-                    m_vehiclestate_color = green; 
+                    m_vehiclestate_color = green;
+                    hidePopup(0); 
                     break;
                 case 1:
                     m_vehiclestate = "PRECHARGE";
                     m_vehiclestate_color = green;
+                    hidePopup(0);
                     break;
                 case 2:
                     m_vehiclestate = "HV";
                     m_vehiclestate_color = green;
+                    hidePopup(0);
                     break;
                 case 3:
                     m_vehiclestate = "DRIVE";
                     m_vehiclestate_color = green;
+                    hidePopup(0);
                     break;
                 case 5:
                     m_vehiclestate = "STARTUP";
                     m_vehiclestate_color = green;
+                    hidePopup(0);
                     break;
                 case 129:
                     m_vehiclestate = "DRV FRM LV";
@@ -553,44 +566,80 @@ namespace dashboard
     }
 
     void Variables::settorquelimit(int limit) {
-        if (m_torquelimit >= limit+5 || m_torquelimit <= limit-5) {
+        if (m_torquelimit >= limit+2 || m_torquelimit <= limit-2) {
             m_torquelimit = limit;
-            showEventPopUp(1);
+            if (m_torquelimit >= prev_knob1_val+20 || m_torquelimit <= prev_knob1_val-20) {
+                showEventPopUp(1);
+            }
             emit torquelimitChanged();
         }
     }
 
     void Variables::setlaunchcontrol(int param) {
-        if (m_launchcontrol >= param+5 || m_launchcontrol <= param-5) {
+        if (m_launchcontrol >= param+2 || m_launchcontrol <= param-2) {
             m_launchcontrol = param;
-            showEventPopUp(2);
+            if (m_launchcontrol >= prev_knob2_val+20 || m_launchcontrol <= prev_knob2_val-20) {
+                showEventPopUp(2);
+            }
             emit launchcontrolChanged();
         }
     }
 
     void Variables::showEventPopUp(int which) {
-        if (m_whichPopupVisible != which) {
-            if (which == 0 && prev_vehicle_state != vehiclestate()) {
-                prev_vehicle_state = vehiclestate();
-                m_whichPopupVisible = which;
-                emit whichPopupVisibleChanged();
-            }
-            if (which == 1 && prev_knob1_val != torquelimit()) {
-                prev_knob1_val = torquelimit();
-                m_whichPopupVisible = which;
-                emit whichPopupVisibleChanged();
-            }
-            if (which == 2 && prev_knob2_val != launchcontrol()) {
-                prev_knob2_val = launchcontrol();
-                m_whichPopupVisible = which;
-                emit whichPopupVisibleChanged();
-            }
+        switch (which) {
+            case 0:
+                if (!m_faultPopupVisible) {
+                    m_faultPopupVisible = true;
+                    hidePopup(1);
+                    hidePopup(2);
+                    emit faultPopupVisibleChanged();
+                    break;
+                }
+            
+            case 1:
+                if (!m_torquelimitPopupVisible && !m_faultPopupVisible) {
+                    m_torquelimitPopupVisible = true;
+                    prev_knob1_val = torquelimit();
+                    hidePopup(2);
+                    emit torquelimitPopupVisibleChanged();
+                    break;
+                }
+
+            case 2:
+                if (!m_launchcontrolPopupVisible && !m_faultPopupVisible) {
+                    m_launchcontrolPopupVisible = true;
+                    prev_knob2_val = launchcontrol();
+                    hidePopup(1);
+                    emit launchcontrolPopupVisibleChanged();
+                    break;
+                }
         }
     }
-    void Variables::hidePopup() {
-        if (m_whichPopupVisible != -1) {
-            m_whichPopupVisible = -1;
-            emit whichPopupVisibleChanged();
+    void Variables::hidePopup(int which) {
+        switch (which) {
+            case 0:
+                if (m_faultPopupVisible) {
+                    m_faultPopupVisible = false;
+                    prev_vehicle_state = vehiclestate();
+                    emit faultPopupVisibleChanged();
+                    break;
+                }
+            
+            case 1:
+                if (m_torquelimitPopupVisible) {
+                    m_torquelimitPopupVisible = false;
+                    prev_knob1_val = torquelimit();
+                    emit torquelimitPopupVisibleChanged();
+                    break;
+                }
+
+            case 2:
+                if (m_launchcontrolPopupVisible) {
+                    m_launchcontrolPopupVisible = false;
+                    prev_knob2_val = launchcontrol();
+                    emit launchcontrolPopupVisibleChanged();
+                    break;
+                }
         }
     }
 

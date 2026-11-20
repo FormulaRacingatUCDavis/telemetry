@@ -6,19 +6,57 @@ import VariablesData
 Item {
 
     Timer {
-        id: closetimer
+        id: closetimer_fault
         interval: 5000
-        running: Data.whichPopupVisible != -1 ? true
-            : false
         onTriggered: {
-            Data.hidePopup()
+            Data.hidePopup(0)
+        }
+    }
+
+    Timer {
+        id: closetimer_torquelimit
+        interval: 5000
+        onTriggered: {
+            Data.hidePopup(1)
+        }
+    }
+
+    Timer {
+        id: closetimer_launchcontrol
+        interval: 5000
+        onTriggered: {
+            Data.hidePopup(2)
+        }
+    }
+
+    Connections {
+        target: Data
+        function onFaultPopupVisibleChanged() {
+            if (Data.faultPopupVisible) {
+                closetimer_fault.restart()
+            } else {
+                closetimer_fault.stop()
+            }
+        }
+        function onTorquelimitPopupVisibleChanged() {
+            if (Data.torquelimitPopupVisible) {
+                closetimer_torquelimit.restart()
+            } else {
+                closetimer_torquelimit.stop()
+            }
+        }
+        function onLaunchcontrolPopupVisibleChanged() {
+            if (Data.launchcontrolPopupVisible) {
+                closetimer_launchcontrol.restart()
+            } else {
+                closetimer_launchcontrol.stop()
+            }
         }
     }
 
     Rectangle {
-        id: faultpopup
-        visible: Data.whichPopupVisible == 0 ? true
-                : false
+        id: faultPopup
+        visible: Data.faultPopupVisible
         anchors.fill: parent
 
         color: (Data.vehiclestate == "UNCALIBRTD" || Data.vehiclestate == "BDSP TRIPD") ? mainpage.yellow : mainpage.red
@@ -26,11 +64,11 @@ Item {
         Text {
             id: faulttext
             color: "black"
-            font.pixelSize: (Data.vehiclestate.length > 9) ? faultpopup.width * 0.1 : faultpopup.width * 0.15
+            font.pixelSize: (Data.vehiclestate.length > 9) ? faultPopup.width * 0.1 : faultPopup.width * 0.15
             font.family: mainpage.typeface
             font.bold: true
             text: Data.vehiclestate
-            onTextChanged: closetimer.restart()
+            // onTextChanged: closetimer.restart()
 
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
@@ -41,8 +79,7 @@ Item {
 
     Rectangle {
         id: torquepopup
-        visible: Data.whichPopupVisible == 1 ? true
-                : false
+        visible: Data.torquelimitPopupVisible
         anchors.fill: parent
 
         GridLayout {
@@ -68,7 +105,7 @@ Item {
                     font.family: mainpage.typeface
                     font.bold: true
                     text: (Data.torquelimit == -1) ? "" : "" + Data.torquelimit + "%"
-                    onTextChanged: closetimer.restart()
+                    // onTextChanged: closetimer_torquelimit.restart()
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter
@@ -110,8 +147,7 @@ Item {
 
     Rectangle {
         id: launchcontrolpopup
-        visible: Data.whichPopupVisible == 2 ? true
-                : false
+        visible: Data.launchcontrolPopupVisible
         anchors.fill: parent
 
         GridLayout {
@@ -137,7 +173,7 @@ Item {
                     font.family: mainpage.typeface
                     font.bold: true
                     text: (Data.launchcontrol == -1) ? "" : Data.launchcontrol + "%"
-                    onTextChanged: closetimer.restart()
+                    // onTextChanged: closetimer_launchcontrol.restart()
 
                     anchors.horizontalCenter: parent.horizontalCenter
                     horizontalAlignment: Text.AlignHCenter

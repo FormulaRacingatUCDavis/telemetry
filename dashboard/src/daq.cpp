@@ -5,6 +5,7 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 #include <unistd.h>
+#include <cmath>
 
 #include "daq.h"
 #include "fe13_db.h"
@@ -167,8 +168,8 @@ namespace dashboard
             case 0x0A5: // 165 M165_Motor_Position_Info
                 struct cm200_db_m165_motor_position_info_t motor_pos_msg;
                 cm200_db_m165_motor_position_info_unpack(&motor_pos_msg, frame.data, frame.can_dlc);
-                variable_instance->setmph(
-                    cm200_db_m165_motor_position_info_inv_motor_speed_decode(motor_pos_msg.inv_motor_speed * 0.016349)
+                variable_instance->setmph(std::abs(
+                    cm200_db_m165_motor_position_info_inv_motor_speed_decode(motor_pos_msg.inv_motor_speed * 0.016349))
                 ); // = rpm * (60 * pi * Tire Diameter) / (Final Drive Ratio * 63360)
                 break; 
 
